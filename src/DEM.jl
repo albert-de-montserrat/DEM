@@ -4,7 +4,7 @@ module DEM
 
 using LinearAlgebra, LoopVectorization, Tensors, CSV, DataFrames, StaticArrays
 
-export main, semiaxes, saveIO
+export main, semiaxes, saveIO, cleantensor!
 
 """
 Axis structure
@@ -603,6 +603,19 @@ function inv4x4!(Â,A)
     end
 end
 
+function cleantensor!(C)
+    mask1 = [1:3,4:6]
+    mask2 = [4:6,1:3]
+    @inbounds @simd for ll ∈ eachindex(C)
+        @views C[ll][mask1[1],mask1[2]] .= 0.0
+        @views C[ll][mask2[1],mask2[2]] .= 0.0
+        for j ∈ 4:6, i ∈ 4:6
+            if i ≠ j 
+                C[ll][i,j] = 0.0
+            end
+        end
+    end
+end
 
 end
 
