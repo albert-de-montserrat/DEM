@@ -9,10 +9,10 @@ export main, semiaxes, saveIO, cleantensor!
 """
 Axis structure
 """
-struct Axis
-    a1::Float64
-    a2::Float64
-    a3::Float64
+struct Axis{T}
+    a1::T
+    a2::T
+    a3::T
 end
 """
 Interaction tensor structure
@@ -247,8 +247,8 @@ end
             fillAv!(Av, xi)
 
             # -- Inverse of Christoffel tensor
-            # inv4x4!(invAv,Av)
-            invAv = inv(Av)
+            inv4x4!(invAv, Av)
+            # invAv = inv(Av)
 
             # -- Jiang, 2014, JSG
             tensorT!(T,invAv,xi,sinθp)
