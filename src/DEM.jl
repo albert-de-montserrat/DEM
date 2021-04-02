@@ -54,7 +54,7 @@ end
 """
 MAIN FUNCTION
 """
-function main(ηinc,ηmat,ϕf,dϕ,AX)
+function main(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
 
     # -- Make sure isotropic viscosity is Float64 to ensure type stability
     if eltype(ηinc) ≠ Float64
@@ -68,7 +68,7 @@ function main(ηinc,ηmat,ϕf,dϕ,AX)
     ϕ           = range(dϕ,ϕf,step=dϕ)
 
     # -- Get some arrays which constant throughtout the whole simulation
-    n1,n2       = 100, 100    # resolution of θ and ϕ for numerical integral in interaction tensor
+#     n1,n2       = 100, 100    # resolution of θ and ϕ for numerical integral in interaction tensor
     cache       = getTcache(n1,n2)
     β           = βarray()    # constant array of arrays to compute 4th rank tensor inversion
         
@@ -162,11 +162,11 @@ Green function
     Ts          = symmetricinteractiontensor(T)
     dC          = SymmetricTensor{4, 3}(Cinc3 - Ctemp)
     SdC         = Ts ⊡ dC                    # Eshelby tensor := S = Jd*T*Cm = Ts*Cm 
-    """
-    Add symmetric identity 4th-order tensor
-    In reality it should be Ai = Id + SdC, which is however not invertible in the
-    cartesian space (Lebenson et al., 1998)
-    """
+    #=
+        Add symmetric identity 4th-order tensor
+        In reality it should be Ai = Id + SdC, which is however not invertible in the
+        cartesian space (Lebenson et al., 1998)
+    =#
     Ai          = SymmetricTensor{4, 3}(Js .+ SdC)
     # Ai          = Js + SdC
     invAi       = inv(Ai)                   # overloaded by Tensors.jl
@@ -228,36 +228,28 @@ end
     surface = 0.0
     # xi       = 1 ./a
     for p ∈ 1:cache.n1        
+        
         # to avoid redundant allocations and operations
-        sinθp = sind(cache.θ[p])
-        cosθp = cosd(cache.θ[p])
+        sinθp,cosθp = sincosd(cache.θ[p])
+        
         for q ∈ 1:Int(cache.n2/2)
 
-            # -- to avoid redundant operations
-            sinϕq  = sind(cache.ϕ[q])
-            cosϕq  = cosd(cache.ϕ[q])            
+            # -- to avoid redundant operations          
+            sinϕq,cosϕq = sincosd(cache.ϕ[q])
             
             # -- Director cosines
-            xi[1]  = sinθp*cosϕq/AX.a1
-            xi[2]  = sinθp*sinϕq/AX.a2
-            xi[3]  = cosθp/AX.a3
+            xi = @SVector [sinθp*cosϕq/AX.a1, sinθp*sinϕq/AX.a2, cosθp/AX.a3]
 
             # -- Christoffel viscosity tensor
-            Christoffel!(Av,C,xi)
+            Christoffel!(Av, C, xi)
             fillAv!(Av, xi)
 
             # -- Inverse of Christoffel tensor
-            inv4x4!(invAv, Av)
-            # invAv = inv(Av)
+            # inv4x4!(invAv,Av)
+            invAv = inv(SMatrix{4,4}(Av))
 
             # -- Jiang, 2014, JSG
             tensorT!(T,invAv,xi,sinθp)
-            # @avx for k ∈ 1:3, i ∈ 1:3
-            #     aux = invAv[i, k]
-            #     for l ∈ 1:3, j ∈ 1:3
-            #         T[i, j, k, l] += aux * xi[j] * xi[l] * sinθp
-            #     end
-            # end
 
             surface += sinθp
         end
@@ -288,7 +280,7 @@ end
 
 @inline function fillAv!(Av, xi)
     @avx for i ∈ 1:3
-        xi0      = xi[i]
+        xi0 = xi[i]
         Av[i, 4] = xi0
         Av[4, i] = xi0
     end
@@ -391,9 +383,17 @@ end ## END OF FUNCTION
         Ts[i, j, k, l] +=
             0.25 * (T[i, j, k, l] + T[j, i, k, l] + T[i, j, l, k] + T[j, i, l, k])
     end
+    force_symmetry!(Ts)
     Ts = SymmetricTensor{4, 3}(Ts)
     return Ts
 end ## END OF FUNCTION
+
+@inline function force_symmetry!(Ts)
+    @avx for l = 1:3, k = 1:3, j = 1:3, i = 1:3
+        Ts[j, i, k, l] = Ts[i, j, k, l]
+        Ts[i, j, l, k] = Ts[i, j, k, l]
+    end
+end
 
 ###################################################
 ### Inversion of 4th rank tensor                ###
