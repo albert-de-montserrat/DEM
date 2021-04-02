@@ -1,8 +1,7 @@
 #==================================================
 Load modules for DEM
 ==================================================#
-include(joinpath(pwd(),"DEM.jl")) # load module (A bit slow to load, heavy dependencies)
-# import .DEM: main, semiaxes, saveIO
+using DEM
 #==================================================
 Load modules for Fabric Parameterisation
 ==================================================#
