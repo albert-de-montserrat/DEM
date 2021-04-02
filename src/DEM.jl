@@ -4,7 +4,7 @@ module DEM
 
 using LinearAlgebra, LoopVectorization, Tensors, CSV, DataFrames, StaticArrays
 
-export main, semiaxes, saveIO, cleantensor!
+export dem, semiaxes, saveIO, cleantensor!
 
 """
 Axis structure
@@ -28,7 +28,7 @@ struct Tcache
 end
 
 # -- version 1 : one axis
-@inline  semiaxes(a1::Float64,a2::Float64,a3::Float64) = Axis(a1,a2,a3)
+@inline  semiaxes(a1::Float64,a2::Float64,a3::Float64) = [Axis(a1,a2,a3)]
 
 # -- version 2 : multiple axes
 @inline function semiaxes(a10,a1f,a20,a2f,a30,a3f,da)
@@ -54,7 +54,7 @@ end
 """
 MAIN FUNCTION
 """
-function main(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
+function dem(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
 
     # -- Make sure isotropic viscosity is Float64 to ensure type stability
     if eltype(ηinc) ≠ Float64
