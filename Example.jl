@@ -97,7 +97,7 @@ Solve DEM equation
         (*) outVol  := corresponding volume fractions   (Array)
 """
 t1 = time()
-C, outAx, outVol = main(ηinc,ηmat,ϕf,dϕ,AX)
+C, outAx, outVol = dem(ηinc,ηmat,ϕf,dϕ,AX)
 t2 = time()
 println("\n Process completed after $(t2-t1) seconds \n")
 
@@ -113,19 +113,3 @@ saveIO( C,
         fileName)
 t2 = time();
 println("\n  Output saved in: $fileName after $(t2-t1) seconds \n")
-
-
-#==================================================
-PARAMETERISATION 
-==================================================#
-"""
-Usage 
---------------------------------------------------------------
-    Input :
-        (*) a1, a2, a3 -> principal semi-axes of the BULK FSE  
-                          (either scalar or arrays of Float64)
-    Output :
-        (*) rᵢ = log10( a1 / a2 ) of the average inclusion
-        (*) r₂ = log10( a2 / a3 ) of the average inclusion
-""" 
-rᵢ,r₂ = tensor_parametrisation(a1, a2, a3)
