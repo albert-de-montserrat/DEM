@@ -1,16 +1,4 @@
-#==================================================
-Load modules for DEM
-==================================================#
 using DEM
-#==================================================
-Load modules for Fabric Parameterisation
-==================================================#
-include(joinpath(pwd(),"parameterisation.jl")) # load module
-import .FabricParameterisation: tensor_parametrisation
-
-#==================================================
-Differential Effective Medium (DEM)
-==================================================#
 """
 Define : 
     (*) ηinc -> inclusion isotropic viscosity
