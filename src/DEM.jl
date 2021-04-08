@@ -1,6 +1,6 @@
-__precompile__(true)
-
 module DEM
+
+__precompile__(true)
 
 using LinearAlgebra, LoopVectorization, Tensors, CSV, DataFrames, StaticArrays
 
