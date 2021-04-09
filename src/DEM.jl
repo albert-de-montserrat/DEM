@@ -1,10 +1,10 @@
-module DEM
-
 __precompile__(true)
+
+module DEM
 
 using LinearAlgebra, LoopVectorization, Tensors, CSV, DataFrames, StaticArrays
 
-export dem, semiaxes, saveIO, cleantensor!, Axis
+export main, semiaxes, saveIO, cleantensor!
 
 """
 Axis structure
@@ -54,7 +54,7 @@ end
 """
 MAIN FUNCTION
 """
-function dem(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
+function main(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
 
     # -- Make sure isotropic viscosity is Float64 to ensure type stability
     if eltype(ηinc) ≠ Float64
