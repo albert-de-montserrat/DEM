@@ -389,7 +389,7 @@ end ## END OF FUNCTION
 end ## END OF FUNCTION
 
 @inline function force_symmetry!(Ts)
-    @avx for l = 1:3, k = 1:3, j = 1:3, i = 1:3
+    @inbounds for l = 1:3, k = 1:3, j = 1:3, i = 1:3
         Ts[j, i, k, l] = Ts[i, j, k, l]
         Ts[i, j, l, k] = Ts[i, j, k, l]
     end
