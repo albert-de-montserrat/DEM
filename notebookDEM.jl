@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.0
+# v0.14.1
 
 using Markdown
 using InteractiveUtils
@@ -64,6 +64,27 @@ begin
                a3) # 3rd semi-axisend
 end
 
+# ╔═╡ 9859c162-79f6-4743-a54f-a7418acaa884
+md"# Solve DEM equation
+
+C, outAx, outVol = dem(ηinc<:Real, ηmat<:Real, ϕf<:Float64, dϕ::Float64, AX::Vector{Semiaxes{T}}; n1::Int=100, n2::Int=100)
+
+	Input:
+		ηinc → inclusion viscosity
+		ηmat → matrix viscosity 
+		ϕf → volume fraction
+		dϕ → volume fraction increments
+		AX → Array of inclusion semiaxes
+		n1 → θ spatial discretization for integration of interaction tensor T
+		n2 → ϕ spatial discretization for integration of interaction tensor T
+
+	Output:
+        C → viscous tensor (Array of arrays, C[n][i,j] with i,j = 1,...,9, n = #cases)
+        outAX → array ofinclusion semiaxis (outAX[n] = [a1, a2, a3])
+        outVol → volume fractions (Array)
+
+"
+
 # ╔═╡ 3fa80934-08d6-11eb-0b12-574e70931de1
 C, outAx, outVol = dem(ηinc,ηmat,ϕf,dϕ,AX);
 
@@ -71,13 +92,16 @@ C, outAx, outVol = dem(ηinc,ηmat,ϕf,dϕ,AX);
 cleantensor!(C) # remove floating point errors
 
 # ╔═╡ 51c906ba-096f-11eb-1108-31010cd0c77b
-ϕ    = 0.1; # show tensor at this volume fraction
+ϕ = 0.01; # show tensor at this volume fraction
 
 # ╔═╡ 771064d6-08d6-11eb-105b-6dcfc5d3179c
-ivol = findall(x->x==ϕ,outVol)[1];
+ivol = findall(x->x==ϕ, outVol)[1];
 
 # ╔═╡ 369ac2df-c296-4a27-b17c-3d23c7ebb45e
-C[ivol]
+C[3]
+
+# ╔═╡ 0c961cab-029b-43e6-b256-ec4c7cfb230c
+pwd()
 
 # ╔═╡ Cell order:
 # ╠═b6b55a64-08d5-11eb-0658-ada418d3a58a
@@ -89,8 +113,10 @@ C[ivol]
 # ╟─51228092-9271-43f5-a90a-508ae0403bb8
 # ╟─bd81b598-13ab-4f95-b32e-72ad0052187e
 # ╠═ba5f7d6c-096f-11eb-106b-75fed594ad68
+# ╟─9859c162-79f6-4743-a54f-a7418acaa884
 # ╠═3fa80934-08d6-11eb-0b12-574e70931de1
 # ╠═44dd0b30-4b48-4dc6-a76c-a437d9ee4b0d
 # ╠═51c906ba-096f-11eb-1108-31010cd0c77b
 # ╠═771064d6-08d6-11eb-105b-6dcfc5d3179c
 # ╠═369ac2df-c296-4a27-b17c-3d23c7ebb45e
+# ╠═0c961cab-029b-43e6-b256-ec4c7cfb230c
