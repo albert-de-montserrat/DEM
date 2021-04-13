@@ -4,7 +4,7 @@ module DEM
 
 using LinearAlgebra, LoopVectorization, Tensors, CSV, DataFrames, StaticArrays
 
-export main, semiaxes, saveIO, cleantensor!
+export dem, semiaxes, saveIO, cleantensor!
 
 """
 Axis structure
