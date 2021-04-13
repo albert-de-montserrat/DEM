@@ -52,9 +52,13 @@ end
     return a
 end
 """
-MAIN FUNCTION
+dem(ηinc, ηmat, ϕf, dϕ, AX::Vector{Semiaxes{T}}; n1 = 100, n2 = 100)
+
+    where ηinc is the viscosity of the inclusion, ηmat is the viscosity of the matrix, ϕf is the maximum volume fraction, dϕ is the increments of volume fraction,
+    AX is the inclusion semiaxes, and n1 and n2 are the spatial discretization of θ and ϕ of the interaction tensor T  
+
 """
-function main(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
+function dem(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
 
     # -- Make sure isotropic viscosity is Float64 to ensure type stability
     if eltype(ηinc) ≠ Float64
@@ -142,12 +146,9 @@ function solvedem!(CdemVoigt,outAx,outVol,
         # -- ~time integration
         c0dem   = RK4(Js,Jd,Citensor,c0dem,β, ϕi, dϕ , AX, cache)
         # -- to Voigt
-        # A       = tensor2voigt(c0dem)
-        tensor2voigt!(A,c0dem,ijkl)
-        # id      = findall(x->abs(x)<1e-3,A)
-        # A[id]  .= 0.0   
+        tensor2voigt!(A, c0dem, ijkl)
         # -- store
-        push!(CdemVoigt,A)
+        push!(CdemVoigt, deepcopy(A))
         push!(outAx,[AX.a1, AX.a3,AX.a3])
         push!(outVol,ϕi)
     end
