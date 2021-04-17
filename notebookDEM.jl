@@ -97,10 +97,7 @@ cleantensor!(C) # remove floating point errors
 ivol = findall(x->x==ϕ, outVol)[1];
 
 # ╔═╡ 369ac2df-c296-4a27-b17c-3d23c7ebb45e
-C[3]
-
-# ╔═╡ 0c961cab-029b-43e6-b256-ec4c7cfb230c
-pwd()
+C[ivol]
 
 # ╔═╡ Cell order:
 # ╠═b6b55a64-08d5-11eb-0658-ada418d3a58a
