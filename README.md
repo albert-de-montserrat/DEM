@@ -10,4 +10,4 @@ Import Pkg; Pkg.add("https://github.com/albert-de-montserrat/DEM.git")
 
 ## Usage
 
-See notebookDEM.jl for a [Pluto notebook](https://github.com/fonsp/Pluto.jl) example
+See notebookDEM.jl for an interactive [Pluto](https://github.com/fonsp/Pluto.jl) example
