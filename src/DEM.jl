@@ -149,7 +149,7 @@ function solvedem!(CdemVoigt,outAx,outVol,
         tensor2voigt!(A, c0dem, ijkl)
         # -- store
         push!(CdemVoigt, deepcopy(A))
-        push!(outAx,[AX.a1, AX.a3,AX.a3])
+        push!(outAx,[AX.a1, AX.a2, AX.a3])
         push!(outVol,ϕi)
     end
 
