@@ -30,6 +30,22 @@ end
 # -- version 1 : one axis
 @inline  semiaxes(a1::Float64,a2::Float64,a3::Float64) = [Axis(a1,a2,a3)]
 
+# -- version 1.2 : multiple axes
+function semiaxes(a10::Number,a1f::Number, Δ1::Number,
+                  a20::Number,a2f::Number, Δ2::Number,
+                  a30::Number,a3f::Number, Δ3::Number)
+
+    a1 = range(a10, a1f, step=Δ1); n1 = length(a1)
+    a2 = range(a20, a2f, step=Δ2); n2 = length(a2)
+    a3 = range(a30, a3f, step=Δ3); n3 = length(a3)
+    a1, a2, a3 = promote(a1, a2, a3)
+    a  = Axis[] 
+    for i1 ∈ 1:n1, i2 ∈ 1:n2, i3 ∈ 1:n3
+        push!(a,Axis(a1[i1],a2[i2],a3[i3]))
+    end
+    return a
+end
+
 # -- version 2 : multiple axes
 @inline function semiaxes(a10,a1f,a20,a2f,a30,a3f,da)
     a1 = range(a10, a1f, step=da); n1 = length(a1)
