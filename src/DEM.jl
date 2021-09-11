@@ -31,7 +31,7 @@ end
 @inline  semiaxes(a1::Float64,a2::Float64,a3::Float64) = [Axis(a1,a2,a3)]
 
 # -- version 1.2 : multiple axes
-function semiaxes(a10::Number,a1f::Number, Δ1::Number,
+@inline function semiaxes(a10::Number,a1f::Number, Δ1::Number,
                   a20::Number,a2f::Number, Δ2::Number,
                   a30::Number,a3f::Number, Δ3::Number)
 
@@ -88,7 +88,6 @@ function dem(ηinc,ηmat,ϕf,dϕ,AX;n1 = 100, n2 = 100)
     ϕ           = range(dϕ,ϕf,step=dϕ)
 
     # -- Get some arrays which constant throughtout the whole simulation
-#     n1,n2       = 100, 100    # resolution of θ and ϕ for numerical integral in interaction tensor
     cache       = getTcache(n1,n2)
     β           = βarray()    # constant array of arrays to compute 4th rank tensor inversion
         
@@ -141,9 +140,8 @@ function parallel_launcher(ηinc,ηmat,ϕf,dϕ,AX)
     end
 end
 
-"""
-DEM solver
-"""
+
+# DEM solver
 function solvedem!(CdemVoigt,outAx,outVol,
     Js,Jd,Cmtensor,Citensor,AX,dϕ,ϕ,β,cache)
 
@@ -170,9 +168,7 @@ function solvedem!(CdemVoigt,outAx,outVol,
     end
 
 end
-"""
-Green function
-"""
+            
 # -- Green function
 @inline function greenfunction(Js, Jd, Ctemp,Cinc3, β, ϕ, AX,cache)
     T           = interactiontensor(Ctemp, AX, cache)
@@ -243,7 +239,6 @@ end
     invAv   = similar(Av)
     xi      = Vector{Float64}(undef, 3)
     surface = 0.0
-    # xi       = 1 ./a
     for p ∈ 1:cache.n1        
         
         # to avoid redundant allocations and operations
@@ -303,11 +298,9 @@ end
     end
 end
 
-"""
-Tensor operations
-"""
+
 ###################################################
-###   Convert C from voigt to tensor notation   ###
+#     Convert C from voigt to tensor notation   
 ###################################################
 @inline function voigt2tensor(A::Array{Float64,2})
     ijkl    = Int8[1 6 5; 6 2 4; 5 4 3]    # voigt to tensor mapping
@@ -325,10 +318,10 @@ Tensor operations
     end
     B = SymmetricTensor{4, 3}(B)
     return B
-end ## End of function
+end
 
 ###################################################
-###   Convert C from tensor to voigt notation   ###
+#   Convert C from tensor to voigt notation   
 ###################################################
 @inline function tensor2voigt(A)
     ijkl    = Int8[1 6 5; 6 2 4; 5 4 3]    # voigt to tensor mapping
@@ -346,7 +339,6 @@ end ## End of function
 end ## End of function
 
 @inline function tensor2voigt!(B,A,ijkl) # zero allocations version
-    
     @avx for l = 1:3
         for k = 1:3
             for j = 1:3
@@ -356,12 +348,11 @@ end ## End of function
             end
         end
     end
-    
 end ## End of function
 
 
 ###################################################
-### DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS ###
+# DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS 
 ###################################################
 @inline function contraction(A::Array{Float64,4}, B::Array{Float64,4})
     C = fill(0.0, 3, 3, 3, 3)
@@ -376,7 +367,7 @@ end ## End of function
 end ## END OF FUNCTION
 
 ###################################################
-### DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS ###
+# DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS 
 ###################################################
 @inline function identityFourthOrder()
     # deviatoric and symmetric 4th rank identity matrices
@@ -392,7 +383,7 @@ end ## END OF FUNCTION
 end ## END OF FUNCTION
 
 ###################################################
-### DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS ###
+# DOUBLE CONTRACTION OF TWO 4TH RANK TENSORS 
 ###################################################
 @inline function symmetricinteractiontensor(T)
     Ts = fill(0.0, 3, 3, 3, 3)
@@ -413,7 +404,7 @@ end ## END OF FUNCTION
 end
 
 ###################################################
-### Inversion of 4th rank tensor                ###
+# Inversion of 4th rank tensor                
 ###################################################
 @inline function inversefourth(X, β)
     h       = 6
