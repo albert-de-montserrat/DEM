@@ -60,10 +60,10 @@ end
 end
 
 # -- version 3 : given an array
-@inline function semiaxes(a1::Vector{Float64},a2::Vector{Float64},a3::Vector{Float64})
+@inline function semiaxes(a1::T,a2::T,a3::T) where T<:AbstractArray
     a  = Axis[] 
-    for i ∈ axes(a1,1)
-        push!(a,Axis(a1[i],a2[i],a3[i]))
+    for i in eachindex(a1), j in eachindex(a2), k in eachindex(a3)
+        push!(a,Axis(a1[i],a2[j],a3[k]))
     end
     return a
 end
@@ -149,10 +149,10 @@ function solvedem!(CdemVoigt,outAx,outVol,
     
     # -- store results for ϕ = 0
     push!(CdemVoigt,tensor2voigt(c0dem))
-    push!(outAx,[AX.a1, AX.a3,AX.a3 ])
+    push!(outAx,[AX.a1, AX.a2, AX.a3 ])
     push!(outVol,0.0)
 
-    ijkl    = Int8[1 6 5; 6 2 4; 5 4 3]    # voigt to tensor mapping
+    ijkl    = @SMatrix Int8[1 6 5; 6 2 4; 5 4 3]    # voigt to tensor mapping
     A       = Array{Float64,2}(undef, 6, 6)
 
     # -- incremental volume fraction loop
